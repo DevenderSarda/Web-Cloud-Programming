@@ -1,0 +1,352 @@
+//Index.HTML Page    
+
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>UMKC Shopping Cart</title>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+
+
+    </head>
+    <body>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+    <h1 style="text-align: center;">Welcome to UMKC Shopping Cart</h1>
+        </div>
+        <div class="panel-body">
+    <h5 class="col-md-12">Select the desired category and time period to proceed</h5>
+    <div class="col-md-12">
+    <div class="col-md-4 dropdown">
+        <button class="btn btn-default dropdown-toggle" type="button" id="ddl_category" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            Select Category
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="ddl_category">
+            <li><a href="#">Clothing</a></li>
+            <li><a href="#">Electronics</a></li>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Sports</a></li>
+        </ul>
+    </div>
+        <div class="col-md-4 dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="ddl_timeperiod" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                Select Time Period
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="ddl_timeperiod">
+                <li><a href="#">Daily</a></li>
+                <li><a href="#">Weekly</a></li>
+                <li><a href="#">Monthly</a></li>
+            </ul>
+        </div>
+    <div class="col-md-4">
+        <button id="proceed" type="button" class="btn btn-success">Proceed</button>
+    </div>
+
+    </div>
+        </div>
+    </div>
+
+    <div id="pnl_subcategory" class="panel panel-default" style="border-top: none; display: none;">
+        <div class="panel-body">
+            <h5 class="col-md-12">Select the desired sub-category to proceed with shopping</h5>
+            <div class="col-md-4 dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="ddl_subcategory" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    Select Sub-Category
+                    <span class="caret"></span>
+                </button>
+                <ul id="ul_subcategories" class="dropdown-menu" aria-labelledby="ddl_subcategory">
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="pnl_item" class="panel panel-default" style="border-top: none; display: none;">
+        <div class="panel-body">
+            <div class="col-md-12">
+                <div id="image_container" class="col-md-4">
+
+                </div>
+                <div id="item_description" class="col-md-8">
+
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer"><div class="ui-description" style="text-align: right;">
+            <span>© 2017 UMKC</span>
+        </div>
+        </div></div>
+
+
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="js/index.js"></script>
+    </body>
+    </html>
+
+////////////END OF Index.HTML////////////////////////////////////////
+
+
+///////////////Index.js///////////////////////////////////////////////////
+
+/**
+ * Created by deven on 9/8/2017.
+ */
+$( document ).ready(function() {
+    $('.dropdown-menu').on( 'click', 'a', function(event) {
+        var text = $(this).html();
+        var htmlText = text + ' <span class="caret"></span>';
+        $(this).closest('.dropdown').find('.dropdown-toggle').html(htmlText);
+        if(this.parentElement.parentElement.id === 'ul_subcategories'){
+            $('#pnl_item').show();
+            $('#image_container').html('');
+            $('#item_description').html('');
+            switch(this.text) {
+                case 'Jeans':
+                    $('#image_container').append('<span>Jeans</span><img class="img_item" style="cursor: pointer" src="./images/jeans.png" alt="Jeans" height="200" width="175">');
+                    $('#item_description').append('<span>Jeans are a type of pants, typically made from denim or dungaree cloth. ... Prior to the Levi Strauss patented trousers, the term "blue jeans" had been long in use for various garments (including trousers, overalls, and coats), constructed from blue colored denim.</span>')
+                    break;
+                case 'Women':
+                    $('#image_container').append('<span>Women</span><img class="img_item" style="cursor: pointer" src="./images/women.png" alt="Women" height="200" width="175">');
+                    $('#item_description').append('<span>Women wear are a type of pants, typically made from denim or dungaree cloth. ... Prior to the Levi Strauss patented trousers, the term "blue jeans" had been long in use for various garments (including trousers, overalls, and coats), constructed from blue colored denim.</span>')
+                    break;
+                case 'Shorts':
+                    $('#image_container').append('<span>Shorts</span><img class="img_item" style="cursor: pointer" src="./images/short.png" alt="Short" height="200" width="175">');
+                    $('#item_description').append('<span>Short wear are a type of pants, typically made from denim or dungaree cloth. ... Prior to the Levi Strauss patented trousers, the term "blue jeans" had been long in use for various garments (including trousers, overalls, and coats), constructed from blue colored denim.</span>')
+                    break;
+                case 'iPad':
+                    $('#image_container').append('<span>iPad</span><img class="img_item" style="cursor: pointer" src="./images/ipad.png" alt="ipad" height="200" width="175">');
+                    $('#item_description').append('<span>iPad are a type of pants, typically made from denim or dungaree cloth. ... Prior to the Levi Strauss patented trousers, the term "blue jeans" had been long in use for various garments (including trousers, overalls, and coats), constructed from blue colored denim.</span>')
+                    break;
+                case 'Kindle':
+                    $('#image_container').append('<span>Kindle</span><img class="img_item" style="cursor: pointer" src="./images/kindle.png" alt="kindle" height="200" width="175">');
+                    $('#item_description').append('<span>Kindle are a type of pants, typically made from denim or dungaree cloth. ... Prior to the Levi Strauss patented trousers, the term "blue jeans" had been long in use for various garments (including trousers, overalls, and coats), constructed from blue colored denim.</span>')
+                    break;
+                case 'HeadPhones':
+                    $('#image_container').append('<span>HeadPhones</span><img class="img_item" style="cursor: pointer" src="./images/headphone.png" alt="Head Phones" height="200" width="175">');
+                    $('#item_description').append('<span>Head Phones are a type of pants, typically made from denim or dungaree cloth. ... Prior to the Levi Strauss patented trousers, the term "blue jeans" had been long in use for various garments (including trousers, overalls, and coats), constructed from blue colored denim.</span>')
+                    break;
+                case 'Laptop':
+                    $('#image_container').append('<span>Laptop</span><img class="img_item" style="cursor: pointer" src="./images/laptop.png" alt="Laptop" height="200" width="175">');
+                    $('#item_description').append('<span>Laptop are a type of pants, typically made from denim or dungaree cloth. ... Prior to the Levi Strauss patented trousers, the term "blue jeans" had been long in use for various garments (including trousers, overalls, and coats), constructed from blue colored denim.</span>')
+                    break;
+                case 'Bed':
+                    $('#image_container').append('<span>Bed</span><img class="img_item" style="cursor: pointer" src="./images/bed.png" alt="Bed" height="200" width="175">');
+                    $('#item_description').append('<span>Bed are a type of pants, typically made from denim or dungaree cloth. ... Prior to the Levi Strauss patented trousers, the term "blue jeans" had been long in use for various garments (including trousers, overalls, and coats), constructed from blue colored denim.</span>')
+                    break;
+                case 'Comforter':
+                    $('#image_container').append('<span>Comforter</span><img class="img_item" style="cursor: pointer" src="./images/comforter.png" alt="Comforter" height="200" width="175">');
+                    $('#item_description').append('<span>Comforter are a type of pants, typically made from denim or dungaree cloth. ... Prior to the Levi Strauss patented trousers, the term "blue jeans" had been long in use for various garments (including trousers, overalls, and coats), constructed from blue colored denim.</span>')
+                    break;
+                case 'Dinning Table':
+                    $('#image_container').append('<span>Dinning Table</span><img class="img_item" style="cursor: pointer" src="./images/dinningtable.png" alt="Dinning Table" height="200" width="175">');
+                    $('#item_description').append('<span>Dinning Table are a type of pants, typically made from denim or dungaree cloth. ... Prior to the Levi Strauss patented trousers, the term "blue jeans" had been long in use for various garments (including trousers, overalls, and coats), constructed from blue colored denim.</span>')
+                    break;
+                case 'Sofa':
+                    $('#image_container').append('<span>Sofa</span><img class="img_item" style="cursor: pointer" src="./images/sofa.png" alt="Sofa" height="200" width="175">');
+                    $('#item_description').append('<span>Sofa are a type of pants, typically made from denim or dungaree cloth. ... Prior to the Levi Strauss patented trousers, the term "blue jeans" had been long in use for various garments (including trousers, overalls, and coats), constructed from blue colored denim.</span>')
+                    break;
+                case 'Bed Lamp':
+                    $('#image_container').append('<span>Bed Lamp</span><img class="img_item" style="cursor: pointer" src="./images/bedlamp.png" alt="Bed Lamp" height="200" width="175">');
+                    $('#item_description').append('<span>Bed Lamp are a type of pants, typically made from denim or dungaree cloth. ... Prior to the Levi Strauss patented trousers, the term "blue jeans" had been long in use for various garments (including trousers, overalls, and coats), constructed from blue colored denim.</span>')
+                    break;
+                case 'Training Shoes':
+                    $('#image_container').append('<span>Training Shoes</span><img class="img_item" style="cursor: pointer" src="./images/shoes.png" alt="Shoes" height="200" width="175">');
+                    $('#item_description').append('<span>Shoes are a type of pants, typically made from denim or dungaree cloth. ... Prior to the Levi Strauss patented trousers, the term "blue jeans" had been long in use for various garments (including trousers, overalls, and coats), constructed from blue colored denim.</span>')
+                    break;
+                case 'Gym Wear':
+                    $('#image_container').append('<span>Gym Wear</span><img class="img_item" style="cursor: pointer" src="./images/gymwear.png" alt="Gym Wear" height="200" width="175">');
+                    $('#item_description').append('<span>Gym Wear are a type of pants, typically made from denim or dungaree cloth. ... Prior to the Levi Strauss patented trousers, the term "blue jeans" had been long in use for various garments (including trousers, overalls, and coats), constructed from blue colored denim.</span>')
+                    break;
+                case 'Gloves':
+                    $('#image_container').append('<span>Gloves</span><img class="img_item" style="cursor: pointer" src="./images/gloves.png" alt="Gloves" height="200" width="175">');
+                    $('#item_description').append('<span>Gloves are a type of pants, typically made from denim or dungaree cloth. ... Prior to the Levi Strauss patented trousers, the term "blue jeans" had been long in use for various garments (including trousers, overalls, and coats), constructed from blue colored denim.</span>')
+                    break;
+                case 'Golf Cap':
+                    $('#image_container').append('<span>Golf Cap</span><img class="img_item" style="cursor: pointer" src="./images/cap.png" alt="Short" height="200" width="175">');
+                    $('#item_description').append('<span>Gold Cap are a type of pants, typically made from denim or dungaree cloth. ... Prior to the Levi Strauss patented trousers, the term "blue jeans" had been long in use for various garments (including trousers, overalls, and coats), constructed from blue colored denim.</span>')
+                    break;
+
+                default:
+                    //code block
+            }
+        }
+    });
+
+
+    $("#proceed").click(function () {
+        $('#pnl_subcategory').show();
+        $('#ul_subcategories').html('');
+        if($('#ddl_category').text().replace(/ /g,'') === 'Clothing')
+                $('#ul_subcategories').append('<li><a href="#">Jeans</a></li><li><a href="#">Women</a></li><li><a href="#">Shorts</a></li>');
+        else if($('#ddl_category').text().replace(/ /g,'') === 'Electronics')
+            $('#ul_subcategories').append('<li><a href="#">iPad</a></li><li><a href="#">Kindle</a></li><li><a href="#">HeadPhones</a></li><li><a href="#">Laptop</a></li>');
+        else if($('#ddl_category').text().replace(/ /g,'') === 'Home')
+            $('#ul_subcategories').append('<li><a href="#">Bed</a></li><li><a href="#">Comforter</a></li><li><a href="#">Dinning Table</a></li><li><a href="#">Sofa</a></li><li><a href="#">Bed Lamp</a></li>');
+        else if($('#ddl_category').text().replace(/ /g,'') === 'Sports')
+            $('#ul_subcategories').append('<li><a href="#">Training Shoes</a></li><li><a href="#">Gym Wear</a></li><li><a href="#">Gloves</a></li><li><a href="#">Golf Cap</a></li>');
+    });
+
+   // function imageClick(){
+     // alert('Success');
+    //};
+
+    //$('.img_item').click(function () {
+      //      alert('Success');
+    //});
+
+    //$( "img.img_item" ).live( "click", function() {
+      //  alert('success');
+    //});
+
+    $('#image_container').on('click', '.img_item', function() {
+        localStorage.removeItem("order");
+        localStorage.setItem('order', this.parentElement.innerText);
+        window.location = 'http://localhost:63342/Source/order.html?_ijt=84s874alaj2jf34uev93l26okd#';
+    });
+
+});
+
+////////////END Of Index.js/////////////////////////////////////
+
+////////////////Order.HTML////////////////////////////////////////
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>UMKC Order Details</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+</head>
+<body>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h1 style="text-align: center;">Welcome to UMKC Shopping Cart</h1>
+    </div>
+    <div class="panel-body">
+        <div class="panel panel-default">
+            <div id="order_header" class="col-md-12 panel-heading"></div>
+            <div id="order_body" class="panel-body">
+            </div>
+            <div class="col-md-12" style="text-align: right; padding-top: 10px; padding-bottom: 10px;">
+                <button id="place" type="button" class="btn btn-warning">Place your order</button>
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer"><div class="ui-description" style="text-align: right;">
+        <span>© 2017 UMKC</span>
+    </div>
+    </div>
+</div>
+
+
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="js/order.js"></script>
+</body>
+</html>
+
+//////////////////////END OF Order.html/////////////////////////////////////////
+
+
+////////////////////////////Order.js//////////////////////////////////////////////
+
+/**
+ * Created by deven on 9/8/2017.
+ */
+$( document ).ready(function() {
+    $('#order_header').html('');
+    $('#order_body').html('');
+    var order = localStorage.getItem("order");
+
+    switch(order) {
+        case 'Jeans':
+            $('#order_header').append('<div class="col-md-3"><span style="display: block;">Order Placed</span><span>Sept 8, 2017</span></div><div class="col-md-3"><span style="display: block;">Total</span><span>$16.00</span></div><div class="col-md-3"><span  style="display: block;">Ship To</span><span>Devender Sarda</span></div><div class="col-md-3"><span style="display: block;">Order #</span><span>113-245-535554426585</span></div>');
+            $('#order_body').append('<div class="col-md-12"><div class="col-md-6"><span>Jeans</span><img src="./images/jeans.png" alt="Jeans" height="200" width="175"></div><div class="col-md-6"><span>Choose a delivery option</span><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 14-19</label></div><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 13-18</label></div><div class="radio"  style="display: block;"><label><input type="radio"  name="optradio" disabled>Wednesday, Sept. 13</label></div></div></div>');
+            break;
+        case 'Women':
+            $('#order_header').append('<div class="col-md-3"><span style="display: block;">Order Placed</span><span>Sept 8, 2017</span></div><div class="col-md-3"><span style="display: block;">Total</span><span>$16.00</span></div><div class="col-md-3"><span  style="display: block;">Ship To</span><span>Devender Sarda</span></div><div class="col-md-3"><span style="display: block;">Order #</span><span>113-245-535554426585</span></div>');
+            $('#order_body').append('<div class="col-md-12"><div class="col-md-6"><span>Women</span><img src="./images/women.png" alt="Jeans" height="200" width="175"></div><div class="col-md-6"><span>Choose a delivery option</span><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 14-19</label></div><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 13-18</label></div><div class="radio"  style="display: block;"><label><input type="radio"  name="optradio" disabled>Wednesday, Sept. 13</label></div></div></div>');
+            break;
+        case 'Shorts':
+            $('#order_header').append('<div class="col-md-3"><span style="display: block;">Order Placed</span><span>Sept 8, 2017</span></div><div class="col-md-3"><span style="display: block;">Total</span><span>$16.00</span></div><div class="col-md-3"><span  style="display: block;">Ship To</span><span>Devender Sarda</span></div><div class="col-md-3"><span style="display: block;">Order #</span><span>113-245-535554426585</span></div>');
+            $('#order_body').append('<div class="col-md-12"><div class="col-md-6"><span>Shorts</span><img src="./images/short.png" alt="Jeans" height="200" width="175"></div><div class="col-md-6"><span>Choose a delivery option</span><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 14-19</label></div><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 13-18</label></div><div class="radio"  style="display: block;"><label><input type="radio"  name="optradio" disabled>Wednesday, Sept. 13</label></div></div></div>');
+            break;
+        case 'iPad':
+            $('#order_header').append('<div class="col-md-3"><span style="display: block;">Order Placed</span><span>Sept 8, 2017</span></div><div class="col-md-3"><span style="display: block;">Total</span><span>$16.00</span></div><div class="col-md-3"><span  style="display: block;">Ship To</span><span>Devender Sarda</span></div><div class="col-md-3"><span style="display: block;">Order #</span><span>113-245-535554426585</span></div>');
+            $('#order_body').append('<div class="col-md-12"><div class="col-md-6"><span>iPad</span><img src="./images/ipad.png" alt="Jeans" height="200" width="175"></div><div class="col-md-6"><span>Choose a delivery option</span><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 14-19</label></div><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 13-18</label></div><div class="radio"  style="display: block;"><label><input type="radio"  name="optradio" disabled>Wednesday, Sept. 13</label></div></div></div>');
+            break;
+        case 'Kindle':
+            $('#order_header').append('<div class="col-md-3"><span style="display: block;">Order Placed</span><span>Sept 8, 2017</span></div><div class="col-md-3"><span style="display: block;">Total</span><span>$16.00</span></div><div class="col-md-3"><span  style="display: block;">Ship To</span><span>Devender Sarda</span></div><div class="col-md-3"><span style="display: block;">Order #</span><span>113-245-535554426585</span></div>');
+            $('#order_body').append('<div class="col-md-12"><div class="col-md-6"><span>Kindle</span><img src="./images/kindle.png" alt="Jeans" height="200" width="175"></div><div class="col-md-6"><span>Choose a delivery option</span><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 14-19</label></div><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 13-18</label></div><div class="radio"  style="display: block;"><label><input type="radio"  name="optradio" disabled>Wednesday, Sept. 13</label></div></div></div>');
+            break;
+        case 'HeadPhones':
+            $('#order_header').append('<div class="col-md-3"><span style="display: block;">Order Placed</span><span>Sept 8, 2017</span></div><div class="col-md-3"><span style="display: block;">Total</span><span>$16.00</span></div><div class="col-md-3"><span  style="display: block;">Ship To</span><span>Devender Sarda</span></div><div class="col-md-3"><span style="display: block;">Order #</span><span>113-245-535554426585</span></div>');
+            $('#order_body').append('<div class="col-md-12"><div class="col-md-6"><span>HeadPhones</span><img src="./images/headphone.png" alt="Jeans" height="200" width="175"></div><div class="col-md-6"><span>Choose a delivery option</span><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 14-19</label></div><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 13-18</label></div><div class="radio"  style="display: block;"><label><input type="radio"  name="optradio" disabled>Wednesday, Sept. 13</label></div></div></div>');
+            break;
+        case 'Laptop':
+            $('#order_header').append('<div class="col-md-3"><span style="display: block;">Order Placed</span><span>Sept 8, 2017</span></div><div class="col-md-3"><span style="display: block;">Total</span><span>$16.00</span></div><div class="col-md-3"><span  style="display: block;">Ship To</span><span>Devender Sarda</span></div><div class="col-md-3"><span style="display: block;">Order #</span><span>113-245-535554426585</span></div>');
+            $('#order_body').append('<div class="col-md-12"><div class="col-md-6"><span>Laptop</span><img src="./images/laptop.png" alt="Jeans" height="200" width="175"></div><div class="col-md-6"><span>Choose a delivery option</span><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 14-19</label></div><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 13-18</label></div><div class="radio"  style="display: block;"><label><input type="radio"  name="optradio" disabled>Wednesday, Sept. 13</label></div></div></div>');
+            break;
+        case 'Bed':
+            $('#order_header').append('<div class="col-md-3"><span style="display: block;">Order Placed</span><span>Sept 8, 2017</span></div><div class="col-md-3"><span style="display: block;">Total</span><span>$16.00</span></div><div class="col-md-3"><span  style="display: block;">Ship To</span><span>Devender Sarda</span></div><div class="col-md-3"><span style="display: block;">Order #</span><span>113-245-535554426585</span></div>');
+            $('#order_body').append('<div class="col-md-12"><div class="col-md-6"><span>Bed</span><img src="./images/bed.png" alt="Jeans" height="200" width="175"></div><div class="col-md-6"><span>Choose a delivery option</span><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 14-19</label></div><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 13-18</label></div><div class="radio"  style="display: block;"><label><input type="radio"  name="optradio" disabled>Wednesday, Sept. 13</label></div></div></div>');
+            break;
+        case 'Comforter':
+            $('#order_header').append('<div class="col-md-3"><span style="display: block;">Order Placed</span><span>Sept 8, 2017</span></div><div class="col-md-3"><span style="display: block;">Total</span><span>$16.00</span></div><div class="col-md-3"><span  style="display: block;">Ship To</span><span>Devender Sarda</span></div><div class="col-md-3"><span style="display: block;">Order #</span><span>113-245-535554426585</span></div>');
+            $('#order_body').append('<div class="col-md-12"><div class="col-md-6"><span>Comforter</span><img src="./images/comforter.png" alt="Jeans" height="200" width="175"></div><div class="col-md-6"><span>Choose a delivery option</span><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 14-19</label></div><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 13-18</label></div><div class="radio"  style="display: block;"><label><input type="radio"  name="optradio" disabled>Wednesday, Sept. 13</label></div></div></div>');
+            break;
+        case 'Dinning Table':
+            $('#order_header').append('<div class="col-md-3"><span style="display: block;">Order Placed</span><span>Sept 8, 2017</span></div><div class="col-md-3"><span style="display: block;">Total</span><span>$16.00</span></div><div class="col-md-3"><span  style="display: block;">Ship To</span><span>Devender Sarda</span></div><div class="col-md-3"><span style="display: block;">Order #</span><span>113-245-535554426585</span></div>');
+            $('#order_body').append('<div class="col-md-12"><div class="col-md-6"><span>Dinning Table</span><img src="./images/dinningtable.png" alt="Jeans" height="200" width="175"></div><div class="col-md-6"><span>Choose a delivery option</span><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 14-19</label></div><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 13-18</label></div><div class="radio"  style="display: block;"><label><input type="radio"  name="optradio" disabled>Wednesday, Sept. 13</label></div></div></div>');
+            break;
+        case 'Sofa':
+            $('#order_header').append('<div class="col-md-3"><span style="display: block;">Order Placed</span><span>Sept 8, 2017</span></div><div class="col-md-3"><span style="display: block;">Total</span><span>$16.00</span></div><div class="col-md-3"><span  style="display: block;">Ship To</span><span>Devender Sarda</span></div><div class="col-md-3"><span style="display: block;">Order #</span><span>113-245-535554426585</span></div>');
+            $('#order_body').append('<div class="col-md-12"><div class="col-md-6"><span>Sofa</span><img src="./images/sofa.png" alt="Jeans" height="200" width="175"></div><div class="col-md-6"><span>Choose a delivery option</span><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 14-19</label></div><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 13-18</label></div><div class="radio"  style="display: block;"><label><input type="radio"  name="optradio" disabled>Wednesday, Sept. 13</label></div></div></div>');
+            break;
+        case 'Bed Lamp':
+            $('#order_header').append('<div class="col-md-3"><span style="display: block;">Order Placed</span><span>Sept 8, 2017</span></div><div class="col-md-3"><span style="display: block;">Total</span><span>$16.00</span></div><div class="col-md-3"><span  style="display: block;">Ship To</span><span>Devender Sarda</span></div><div class="col-md-3"><span style="display: block;">Order #</span><span>113-245-535554426585</span></div>');
+            $('#order_body').append('<div class="col-md-12"><div class="col-md-6"><span>Bed Lamp</span><img src="./images/bedlamp.png" alt="Jeans" height="200" width="175"></div><div class="col-md-6"><span>Choose a delivery option</span><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 14-19</label></div><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 13-18</label></div><div class="radio"  style="display: block;"><label><input type="radio"  name="optradio" disabled>Wednesday, Sept. 13</label></div></div></div>');
+            break;
+        case 'Training Shoes':
+            $('#order_header').append('<div class="col-md-3"><span style="display: block;">Order Placed</span><span>Sept 8, 2017</span></div><div class="col-md-3"><span style="display: block;">Total</span><span>$16.00</span></div><div class="col-md-3"><span  style="display: block;">Ship To</span><span>Devender Sarda</span></div><div class="col-md-3"><span style="display: block;">Order #</span><span>113-245-535554426585</span></div>');
+            $('#order_body').append('<div class="col-md-12"><div class="col-md-6"><span>Training Shoes</span><img src="./images/shoes.png" alt="Jeans" height="200" width="175"></div><div class="col-md-6"><span>Choose a delivery option</span><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 14-19</label></div><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 13-18</label></div><div class="radio"  style="display: block;"><label><input type="radio"  name="optradio" disabled>Wednesday, Sept. 13</label></div></div></div>');
+            break;
+        case 'Gym Wear':
+            $('#order_header').append('<div class="col-md-3"><span style="display: block;">Order Placed</span><span>Sept 8, 2017</span></div><div class="col-md-3"><span style="display: block;">Total</span><span>$16.00</span></div><div class="col-md-3"><span  style="display: block;">Ship To</span><span>Devender Sarda</span></div><div class="col-md-3"><span style="display: block;">Order #</span><span>113-245-535554426585</span></div>');
+            $('#order_body').append('<div class="col-md-12"><div class="col-md-6"><span>Gym Wear</span><img src="./images/gymwear.png" alt="Jeans" height="200" width="175"></div><div class="col-md-6"><span>Choose a delivery option</span><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 14-19</label></div><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 13-18</label></div><div class="radio"  style="display: block;"><label><input type="radio"  name="optradio" disabled>Wednesday, Sept. 13</label></div></div></div>');
+            break;
+        case 'Gloves':
+            $('#order_header').append('<div class="col-md-3"><span style="display: block;">Order Placed</span><span>Sept 8, 2017</span></div><div class="col-md-3"><span style="display: block;">Total</span><span>$16.00</span></div><div class="col-md-3"><span  style="display: block;">Ship To</span><span>Devender Sarda</span></div><div class="col-md-3"><span style="display: block;">Order #</span><span>113-245-535554426585</span></div>');
+            $('#order_body').append('<div class="col-md-12"><div class="col-md-6"><span>Gloves</span><img src="./images/gloves.png" alt="Jeans" height="200" width="175"></div><div class="col-md-6"><span>Choose a delivery option</span><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 14-19</label></div><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 13-18</label></div><div class="radio"  style="display: block;"><label><input type="radio"  name="optradio" disabled>Wednesday, Sept. 13</label></div></div></div>');
+            break;
+        case 'Golf Cap':
+            $('#order_header').append('<div class="col-md-3"><span style="display: block;">Order Placed</span><span>Sept 8, 2017</span></div><div class="col-md-3"><span style="display: block;">Total</span><span>$16.00</span></div><div class="col-md-3"><span  style="display: block;">Ship To</span><span>Devender Sarda</span></div><div class="col-md-3"><span style="display: block;">Order #</span><span>113-245-535554426585</span></div>');
+            $('#order_body').append('<div class="col-md-12"><div class="col-md-6"><span>Golf Cap</span><img src="./images/cap.png" alt="Jeans" height="200" width="175"></div><div class="col-md-6"><span>Choose a delivery option</span><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 14-19</label></div><div class="radio"  style="display: block;"><label><input type="radio" name="optradio">Sept 13-18</label></div><div class="radio"  style="display: block;"><label><input type="radio"  name="optradio" disabled>Wednesday, Sept. 13</label></div></div></div>');
+            break;
+
+        default:
+        //code block
+    };
+
+
+});
+
+/////////////////////////////////END OF Order.js/////////////////////////////////////
