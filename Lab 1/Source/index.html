@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>UMKC Shopping Cart</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+
+
+</head>
+<body>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+<h1 style="text-align: center;">Welcome to UMKC Shopping Cart</h1>
+    </div>
+    <div class="panel-body">
+<h5 class="col-md-12">Select the desired category and time period to proceed</h5>
+<div class="col-md-12">
+<div class="col-md-4 dropdown">
+    <button class="btn btn-default dropdown-toggle" type="button" id="ddl_category" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        Select Category
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="ddl_category">
+        <li><a href="#">Clothing</a></li>
+        <li><a href="#">Electronics</a></li>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Sports</a></li>
+    </ul>
+</div>
+    <div class="col-md-4 dropdown">
+        <button class="btn btn-default dropdown-toggle" type="button" id="ddl_timeperiod" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            Select Time Period
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="ddl_timeperiod">
+            <li><a href="#">Daily</a></li>
+            <li><a href="#">Weekly</a></li>
+            <li><a href="#">Monthly</a></li>
+        </ul>
+    </div>
+<div class="col-md-4">
+    <button id="proceed" type="button" class="btn btn-success">Proceed</button>
+</div>
+
+</div>
+    </div>
+</div>
+
+<div id="pnl_subcategory" class="panel panel-default" style="border-top: none; display: none;">
+    <div class="panel-body">
+        <h5 class="col-md-12">Select the desired sub-category to proceed with shopping</h5>
+        <div class="col-md-4 dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="ddl_subcategory" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                Select Sub-Category
+                <span class="caret"></span>
+            </button>
+            <ul id="ul_subcategories" class="dropdown-menu" aria-labelledby="ddl_subcategory">
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div id="pnl_item" class="panel panel-default" style="border-top: none; display: none;">
+    <div class="panel-body">
+        <div class="col-md-12">
+            <div id="image_container" class="col-md-4">
+
+            </div>
+            <div id="item_description" class="col-md-8">
+
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer"><div class="ui-description" style="text-align: right;">
+        <span>© 2017 UMKC</span>
+    </div>
+    </div></div>
+
+
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="js/index.js"></script>
+</body>
+</html>
