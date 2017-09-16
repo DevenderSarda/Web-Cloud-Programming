@@ -1,0 +1,36 @@
+.thinborder {
+    border:1px solid #ccc;
+    width:480px;
+    height:60px;
+    background:white;
+}
+.calcbuttons {
+    padding:10px;
+}
+.numberbutton {
+    width:60px;
+}
+.operationbutton {
+    width:60px;
+}
+.clearbutton {
+    width:160px;
+    background-color:green;
+    color:white;
+}
+.output {
+    background:white;
+    color:black;
+    font-family:"Courier New", Courier;
+    padding:0 10px;
+    text-align:right;
+    font-size:14px;
+}
+.calcbody {
+    background:#ddd;
+    width:500px;
+    padding:10px;
+    box-shadow: 5px 5px 5px #888888;
+    border-radius:12px;
+    display: inline-block;
+}
