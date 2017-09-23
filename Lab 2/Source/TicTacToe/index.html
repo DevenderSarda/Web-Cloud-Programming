@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html ng-app="app" ng-app lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tic Tac Toe</title>
+    <link rel="stylesheet" href="Libraries/css/bootstrap.css">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<div ng-controller="TTTController">
+    <div class="container">
+        <h1>TIC TAC TOE</h1>
+
+        <p>Current Player: <span class="status">{{currentPlayer}}</span>
+        </p>
+        <p ng-hide="!gameover">Game over: winner is <span class="status">{{previousWinner}}</span>
+        </p>
+        <p ng-hide="!draw">Game over: no winner it's a draw!</p>
+        <table class="table-responive">
+            <tbody>
+            <tr ng-repeat="row in board track by $index">
+                <td class="square" ng-repeat="col in row track by $index" ng-click="move(col)" ng-class="{'winner': col.winner}">{{col.token}}</td>
+            </tr>
+            </tbody>
+        </table>
+        <input type="text" name="input" ng-model="N" required ng-trim="true"></input>
+        <button ng-click="setup()" class="btn btn-sm btn-primary">reset board</button>
+    </div>
+</div>
+
+
+            <script src="Libraries/js/jquery-3.1.1.min.js"></script>
+            <script src="Libraries/js/bootstrap.min.js"></script>
+            <script src="Libraries/js/angular.min.js"></script>
+            <script src="Libraries/js/angular-route.min.js"></script>
+            <script src="Libraries/js/angular-sanitize.js"></script>
+<script src="es5-shim.min.js"></script>
+<script src="socket.io.js"></script>
+<script src="sync.js"></script>
+            <script src="app.js"></script>
+</body>
+</html>

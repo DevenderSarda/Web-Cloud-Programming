@@ -1,0 +1,769 @@
+Tic Tac Toe
+
+HTML:
+
+<!DOCTYPE html>
+<html ng-app="app" ng-app lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tic Tac Toe</title>
+    <link rel="stylesheet" href="Libraries/css/bootstrap.css">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<div ng-controller="TTTController">
+    <div class="container">
+        <h1>TIC TAC TOE</h1>
+
+        <p>Current Player: <span class="status">{{currentPlayer}}</span>
+        </p>
+        <p ng-hide="!gameover">Game over: winner is <span class="status">{{previousWinner}}</span>
+        </p>
+        <p ng-hide="!draw">Game over: no winner it's a draw!</p>
+        <table class="table-responive">
+            <tbody>
+            <tr ng-repeat="row in board track by $index">
+                <td class="square" ng-repeat="col in row track by $index" ng-click="move(col)" ng-class="{'winner': col.winner}">{{col.token}}</td>
+            </tr>
+            </tbody>
+        </table>
+        <input type="text" name="input" ng-model="N" required ng-trim="true"></input>
+        <button ng-click="setup()" class="btn btn-sm btn-primary">reset board</button>
+    </div>
+</div>
+
+
+            <script src="Libraries/js/jquery-3.1.1.min.js"></script>
+            <script src="Libraries/js/bootstrap.min.js"></script>
+            <script src="Libraries/js/angular.min.js"></script>
+            <script src="Libraries/js/angular-route.min.js"></script>
+            <script src="Libraries/js/angular-sanitize.js"></script>
+<script src="es5-shim.min.js"></script>
+<script src="socket.io.js"></script>
+<script src="sync.js"></script>
+            <script src="app.js"></script>
+</body>
+</html>
+
+
+Javascript:
+
+var app = angular.module('app', []);
+
+app.controller('TTTController', ['$scope',
+    function ($scope) {
+
+
+        $scope.N = 3; //N x N board
+        $scope.playerX = 'x';
+        $scope.playerO = 'o';
+        $scope.currentPlayer = $scope.playerX;
+        $scope.HORIZ = 'horiz';
+        $scope.VERT = 'vert';
+        $scope.DIAG = 'diag';
+        $scope.ANTI_DIAG = 'anti';
+        $scope.gameover = false;
+        $scope.previousWinner = $scope.currentPlayer;
+        $scope.draw = false;
+
+
+        // x o x
+        // x x o
+        // x o _
+
+        var Cell = function (token, x, y) {
+            this.token = token;
+            this.x = x;
+            this.y = y;
+            this.winner = false;
+        }
+        $scope.board = [[new Cell('x', 0, 0), new Cell('', 0, 1), new Cell('x', 0, 2)], [new Cell('x', 1, 0), new Cell('x', 1, 1), new Cell('o', 1, 2)], [new Cell('x', 2, 0), new Cell('o', 2, 1), new Cell('x', 2, 2)]];
+
+        //reset
+        $scope.setup = function () {
+            $scope.gameover = false;
+            $scope.draw = false;
+            $scope.currentPlayer = $scope.previousWinner;
+            $scope.win = {};
+            $scope.board = new Array($scope.N);
+            for (var i = 0; i < $scope.N; i++) {
+                $scope.board[i] = new Array($scope.N);
+                for (var j = 0; j < $scope.N; j++) {
+                    $scope.board[i][j] = new Cell('', i, j);
+                }
+            }
+        };
+
+        // Diagnoal: /  col == N-1-row
+        // only check diagonal if center (odd) or middle 2 (even) have matches
+        var shouldCheckDiagonal = function (board, player, N) {
+            var result = false;
+            var mid = Math.floor(N / 2);
+            if (N % 2 == 0) { //even check 2 positions
+                if (board[mid - 1][mid].token == player && board[mid][mid - 1].token == player) {
+                    result = true;
+                }
+            } else if (board[mid][mid].token == player) { //odd check middle
+                result = true;
+            }
+            return result;
+        };
+
+        // Anti diagnoal: \ col==row
+        // only check diagonal if center (odd) or middle 2 (even) have matches
+        var shouldCheckAntiDiagonal = function (board, player, N) {
+            var result = false;
+            var mid = Math.floor(N / 2);
+            if (N % 2 == 0) { //even check 2 positions
+                if (board[mid - 1][mid - 1].token == player && board[mid][mid].token == player) {
+                    result = true;
+                }
+            } else if (board[mid][mid].token == player) { //odd check middle
+                result = true;
+            }
+
+
+            return result;
+
+        }
+        var checkSingleHoriz = function (player, x, board, N) {
+            var win = true;
+            for (var col = 0; col < N; col++) {
+                if (board[x][col].token != player) {
+                    win = false;
+                    break;
+                }
+            }
+            return win;
+        };
+
+
+        var checkSingleVert = function (player, y, board, N) {
+            var win = true;
+            for (var row = 0; row < N; row++) {
+                if (board[row][y].token != player) {
+                    win = false;
+                    break;
+                }
+            }
+            return win;
+        }
+        var checkDiag = function (player, board, N) {
+            var win = true;
+            for (var i = 0; i < N; i++) {
+                if (board[i][N - 1 - i].token != player) {
+                    win = false;
+                    break;
+                }
+            }
+            return win;
+        }
+        var checkAnti = function (player, board, N) {
+            var win = true;
+            for (var i = 0; i < N; i++) {
+                if (board[i][i].token != player) {
+                    win = false;
+                    break;
+                }
+            }
+            return win;
+        }
+
+        var move = function (player, x, y, board) {
+            var win = {};
+            $scope.board[x][y] = new Cell(player, x, y);
+
+
+            win[$scope.HORIZ] = checkSingleHoriz(player, x, $scope.board, $scope.N);
+            win[$scope.VERT] = checkSingleVert(player, y, $scope.board, $scope.N);
+
+
+            if (shouldCheckDiagonal($scope.board, player, $scope.N)) {
+                win[$scope.DIAG] = checkDiag(player, $scope.board, $scope.N);
+            } else {
+                win[$scope.DIAG] = false;
+            }
+
+            if (shouldCheckAntiDiagonal($scope.board, player, $scope.N)) {
+                win[$scope.ANTI_DIAG] = checkAnti(player, $scope.board, $scope.N);
+            } else {
+                win[$scope.ANTI_DIAG] = false;
+            }
+            return win;
+        };
+
+        var markWinner = function (direction, x, y, N) {
+            if (direction === $scope.HORIZ) {
+                for (var col = 0; col < N; col++) {
+                    $scope.board[x][col].winner = true;
+                }
+            } else if (direction === $scope.VERT) {
+                for (var row = 0; row < N; row++) {
+                    $scope.board[row][y].winner = true;
+                }
+            } else if (direction === $scope.DIAG) {
+                for (var i = 0; i < N; i++) {
+                    $scope.board[i][N - 1 - i].winner = true;
+                }
+            } else if (direction === $scope.ANTI_DIAG) {
+                for (var i = 0; i < N; i++) {
+                    if ($scope.board[i][i].winner = true);
+                }
+            }
+        }
+        var checkForFull = function (board) {
+            var full = true;
+            for (var i = 0; i < board.length; i++) {
+                for (var j = 0; j < board.length; j++) {
+                    if (board[i][j].token === '') {
+                        full = false;
+                        break;
+                    }
+                }
+                if (full === false) {
+                    break;
+                }
+            }
+            return full;
+        }
+
+        $scope.move = function (cell) {
+            if (!$scope.gameover) {
+                if (cell.token != '') {
+                    return;
+                }
+                var winOnMove = move($scope.currentPlayer, cell.x, cell.y, $scope.board);
+
+                for (var w in winOnMove) {
+                    if (winOnMove[w] === true) {
+                        $scope.gameover = true;
+                        markWinner(w, cell.x, cell.y, $scope.N);
+                    }
+                    console.log(w + " -> " + winOnMove[w]);
+                }
+                if (!$scope.gameover) {
+                    if (checkForFull($scope.board)) {
+                        $scope.draw = true;
+                    } else {
+                        $scope.currentPlayer = ($scope.currentPlayer === $scope.playerX) ? $scope.playerO : $scope.playerX;
+                    }
+                } else {
+                    $scope.previousWinner = $scope.currentPlayer;
+                }
+            }
+        }
+        $scope.setup();
+    }]);
+
+CSS:
+
+td.square {
+    width: 100px;
+    height: 100px;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
+    text-align: center;
+    font-size: 2em;
+}
+td.winner {
+    background: green;
+    color: white;
+}
+.status {
+    font-size: 2em;
+}
+
+
+GITHUB USER FINDER
+
+Login Page:
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <!--<link rel="stylesheet" href="Libraries/css/bootstrap.css">
+    <link rel="stylesheet" href="Libraries/css/font-awesome.min.css">
+    <link rel="stylesheet" href="CSS/LoginStyle.css">-->
+
+</head>
+<div class="login_body" style="height: 100%;">
+    <div class="row" style="margin-right: 0px !important; margin-left: 0px !important;">
+        <div class="col-md-4 col-md-offset-7">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <span class="glyphicon glyphicon-lock"></span> Login</div>
+                <div class="panel-body">
+                    <form class="form-horizontal" role="form">
+                        <!--<img src="" id="user_picture" />-->
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-3 control-label">
+                                Email</label>
+                            <div class="col-sm-9">
+                                <input type="email" class="form-control" ng-blur="loginController.showUserPicture()" ng-model="loginController.login_email" id="inputEmail3" placeholder="Email" required>
+                            </div>
+                        </div>
+                        <div id="welcome_image_container" class="form-group">
+                            <label for="user_welcome_image" class="col-sm-3 control-label">
+                                Welcome </label>
+                            <div class="col-sm-9">
+                                <img src="" height="200" id="user_welcome_image" alt="Image preview..." />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword3" class="col-sm-3 control-label">
+                                Password</label>
+                            <div class="col-sm-9">
+                                <input type="password" class="form-control" ng-model="loginController.login_password" id="inputPassword3" placeholder="Password" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-9">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox"/>
+                                        Remember me
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group last">
+                            <div class="col-sm-offset-3 col-sm-9">
+                                <button type="submit" ng-click="loginController.signIn()" class="btn btn-success btn-sm">
+                                    Sign in</button>
+                                <button type="reset" class="btn btn-default btn-sm">
+                                    Reset</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="panel-footer" data-toggle="modal" data-target=".register-modal">
+                    Not Registered? <a>Register here</a></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade register-modal" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="gridSystemModalLabel">Register Here</h4>
+            </div>
+            <div class="modal-body">
+                        <div class="main-login main-center">
+                            <h5>Sign up once and use all features of the website.</h5>
+                            <form class="" method="post" action="#">
+
+                                <div class="form-group">
+                                    <label for="name" class="cols-sm-2 control-label">Your Name</label>
+                                    <div class="cols-sm-10">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
+                                            <input type="text" class="form-control" name="name" id="name" ng-model="loginController.register_Name"  placeholder="Enter your Name" required/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="email" class="cols-sm-2 control-label">Your Email</label>
+                                    <div class="cols-sm-10">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fa fa-envelope fa" aria-hidden="true"></i></span>
+                                            <input type="email" class="form-control" name="email" id="email" ng-model="loginController.register_Email"  placeholder="Enter your Email" required/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="mobileno" class="cols-sm-2 control-label">Mobile Number</label>
+                                    <div class="cols-sm-10">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fa fa-mobile fa" aria-hidden="true"></i></span>
+                                            <input type="text" class="form-control" name="mobileno" id="mobileno" ng-model="loginController.register_MobileNo" placeholder="Enter your Mobile Number" ng-model="mobileno" only-digits/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="picture" class="cols-sm-2 control-label">Upload Picture</label>
+                                    <div class="cols-sm-10">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fa fa-file-image-o" aria-hidden="true"></i></span>
+                                            <input type="file" class="form-control" ng-model="loginController.image" name="picture" id="picture"  onchange="previewFile()"><br>
+                                            <img src="" height="200" id="user_image" alt="Image preview..." />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="password" class="cols-sm-2 control-label">Password</label>
+                                    <div class="cols-sm-10">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                                            <input type="password" class="form-control" name="password" id="password" ng-model="loginController.register_Password"  placeholder="Enter your Password" required/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="confirm" class="cols-sm-2 control-label">Confirm Password</label>
+                                    <div class="cols-sm-10">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                                            <input type="password" class="form-control" name="confirm" id="confirm" ng-model="loginController.register_ConfirmPassword"  placeholder="Confirm your Password" required/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <button  type="button" id="button" ng-click="loginController.registerUser()" class="btn btn-primary btn-lg btn-block login-button">Register</button>
+                                </div>
+                            </form>
+                        </div>
+                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!--<script src="Libraries/js/jquery-3.1.1.min.js"></script>
+<script src="Libraries/js/bootstrap.min.js"></script>
+<script src="Libraries/js/angular.min.js"></script>
+<script src="Libraries/js/angular-route.min.js"></script>
+<script src="JS/app.js"></script>-->
+</body>
+</html>
+
+Index Page (SPA):
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+    <link rel="stylesheet" href="Libraries/css/bootstrap.css">
+    <link rel="stylesheet" href="Libraries/css/font-awesome.min.css">
+    <link rel="stylesheet" href="CSS/LoginStyle.css">
+
+
+
+</head>
+<body ng-app="socialNetwork">
+
+<div id="index" style="height:100%;" ng-view></div>
+
+<script src="Libraries/js/jquery-3.1.1.min.js"></script>
+<script src="Libraries/js/bootstrap.min.js"></script>
+<script src="Libraries/js/angular.min.js"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCKDmavLszYbphR_dhl__eU5O5QtJ5OXQI&libraries=places&sensor=false" type="text/javascript"></script>
+<script src="Libraries/js/angular-route.min.js"></script>
+<script src="Libraries/js/angular-sanitize.js"></script>
+<!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWhSE1HAi753_M8rcFTfcbBXUQInf8y6c&v=3.exp&sensor=true"></script>-->
+
+<script src="JS/app.js"></script>
+<script src="JS/login.js"></script>
+<script src="JS/home.js"></script>
+</body>
+</html>
+
+Github Home page:
+
+<html>
+<head>
+    <title>Github User Finder</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="jquery.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+</head>
+<body>
+<header>
+    <h1>Find Me!</h1>
+</header>
+<div id="container">
+    <div class="search">
+        <input id="username" placeholder="enter a github username..." type="text"></input>
+    </div>
+    <div id="profile">
+        <h2></h2>
+        <div class="avatar"></div>
+        <div class="information"></div>
+    </div>
+</div>
+
+</body>
+</html>
+
+Javascript:
+
+Angular Loader file (app.js)
+
+/**
+ * Created by deven on 1/28/2017.
+ */
+var socialNetwork = angular.module('socialNetwork', ['ngRoute', 'ngSanitize']);
+var gPictureSrc = '';
+var gUserData = '';
+
+socialNetwork.config(function($routeProvider) {
+    $routeProvider
+        .when('/', {
+            templateUrl: 'login.html',
+            controller: 'loginController',
+            controllerAs: 'loginController'
+        })
+        .when('/about', {
+            templateUrl: 'about.html',
+            controller: 'aboutController'
+        })
+        .when('/home', {
+            templateUrl: 'home.html',
+            controller: 'homeController',
+            controllerAs: 'homeController'
+        })
+        .otherwise({ redirectTo: '/' });
+
+});
+
+function previewFile() {
+    var preview = document.getElementById('user_image'); //selects the query named img
+    var file    = document.querySelector('input[type=file]').files[0]; //sames as here
+    var reader  = new FileReader();
+
+    reader.onloadend = function () {
+        preview.src = reader.result;
+        gPictureSrc = preview.src;
+    }
+
+    if (file) {
+        reader.readAsDataURL(file); //reads the data as a URL
+    } else {
+        preview.src = "";
+    }
+};
+
+
+socialNetwork.directive('onlyDigits', function () {
+    return {
+        restrict: 'A',
+        require: '?ngModel',
+        link: function (scope, element, attrs, modelCtrl) {
+            modelCtrl.$parsers.push(function (inputValue) {
+                if (inputValue == undefined) return '';
+                var transformedInput = inputValue.replace(/[^0-9]/g, '');
+                if (transformedInput !== inputValue) {
+                    modelCtrl.$setViewValue(transformedInput);
+                    modelCtrl.$render();
+                }
+                return transformedInput;
+            });
+        }
+    };
+
+});
+socialNetwork.directive('googlesourceplace', function() {
+    return {
+        require: 'ngModel',
+        link: function(scope, element, attrs, model) {
+            var options = {
+                types: [],
+                componentRestrictions: {}
+            };
+            scope.gFromPlace = new google.maps.places.Autocomplete(element[0], options);
+
+            google.maps.event.addListener(scope.gFromPlace, 'place_changed', function() {
+                scope.$apply(function() {
+                    model.$setViewValue(element.val());
+                    var place = scope.gFromPlace.getPlace();
+                    document.getElementById('fromcityLat').value = place.geometry.location.lat();
+                    document.getElementById('fromcityLng').value = place.geometry.location.lng();
+                });
+            });
+        }
+    };
+
+});
+socialNetwork.directive('googledestinationplace', function() {
+    return {
+        require: 'ngModel',
+        link: function(scope, element, attrs, model) {
+            var options = {
+                types: [],
+                componentRestrictions: {}
+            };
+            scope.gToPlace = new google.maps.places.Autocomplete(element[0], options);
+
+            google.maps.event.addListener(scope.gToPlace, 'place_changed', function() {
+                scope.$apply(function() {
+                    model.$setViewValue(element.val());
+                    var place = scope.gToPlace.getPlace();
+                    document.getElementById('tocityLat').value = place.geometry.location.lat();
+                    document.getElementById('tocityLng').value = place.geometry.location.lng();
+                });
+            });
+        }
+    };
+
+});
+
+Login.js:
+
+/**
+ * Created by deven on 1/29/2017.
+ */
+
+socialNetwork.controller('loginController', ['$scope', '$location', '$window', function($scope, $location, $window) {
+
+    var loginController = this;
+
+    $window.document.title = "Login";
+    $("#welcome_image_container").hide();
+
+    /*loginController.previewFile = function () {
+        var preview = document.getElementById('user_image'); //selects the query named img
+        var file    = document.querySelector('input[type=file]').files[0]; //sames as here
+        var reader  = new FileReader();
+
+        reader.onloadend = function () {
+            preview.src = reader.result;
+            loginController.pictureSrc = preview.src;
+        }
+
+        if (file) {
+            reader.readAsDataURL(file); //reads the data as a URL
+        } else {
+            preview.src = "";
+        }
+    };*/
+
+    loginController.registerUser = function () {
+        if(loginController.register_Email === null || loginController.register_Email === undefined || loginController.register_Email === '' || loginController.register_Name === null || loginController.register_Name === undefined || loginController.register_Name === '' || loginController.register_MobileNo === null || loginController.register_MobileNo === undefined || loginController.register_MobileNo === '' || gPictureSrc === null || gPictureSrc === undefined || gPictureSrc === '' || loginController.register_Password === null || loginController.register_Password === undefined || loginController.register_Password === '') {
+                alert("Please enter all data fields to register.");
+        }
+        else {
+            if(loginController.register_Password === loginController.register_ConfirmPassword){
+                var data = {
+                    'email': loginController.register_Email,
+                    'name': loginController.register_Name,
+                    'MobileNo': loginController.register_MobileNo,
+                    'Picture': gPictureSrc,
+                    'Password': loginController.register_Password
+                }
+                var email = loginController.register_Email;
+                localStorage.setItem(email, JSON.stringify(data));
+                $('.register-modal').modal('hide');
+            }
+            else
+            {
+                alert("Please enter same password to proceed.");
+            }
+
+        }
+    };
+
+
+
+    loginController.showUserPicture = function () {
+        var keys = localStorage.getItem(loginController.login_email);
+        if(keys !== null || keys !== '' || keys !== undefined) {
+            $("#welcome_image_container").show();
+            var dataImage = JSON.parse(keys).Picture;
+            bannerImg = document.getElementById('user_welcome_image');
+            bannerImg.src =  dataImage;
+            gUserData = JSON.parse(keys);
+        }
+        else {
+            $("#welcome_image_container").hide();
+            gUserData = '';
+        }
+    };
+
+    loginController.signIn = function () {
+        var keys = localStorage.getItem(loginController.login_email);
+        if(keys === null || keys === '' || keys === undefined){
+            alert('Please enter valid email and password to login.');
+        }
+        else if(JSON.parse(keys).Password !== loginController.login_password){
+            alert('Please enter correct password to login.');
+        }
+        else
+        {
+            $location.path("home");
+        }
+    };
+}
+]);
+
+Github.js
+
+/**
+ * Created by deven on 1/29/2017.
+ */
+
+socialNetwork.controller('homeController', ['$scope', '$location', '$timeout', '$http', '$window', function($scope, $location, $timeout, $http, $window) {
+
+    var homeController = this;
+   //
+
+
+    function getGithubInfo(user) {
+        //1. Create an instance of XMLHttpRequest class and send a GET request using it. The function should finally return the object(it now contains the response!)
+        var xhttp = new XMLHttpRequest();
+        // xhttp.onreadystatechange = function() {
+        //  return this;
+        //};
+        xhttp.open("GET", "https://api.github.com/users/" + user, false);
+        xhttp.send();
+
+        return xhttp;
+    }
+
+    function showUser(user) {
+
+        //2. set the contents of the h2 and the two div elements in the div '#profile' with the user content
+
+        $('.avatar').html('');
+        $('.information').html('');
+        $('h2').html('');
+        $('h2').text(user.login);
+        $('.avatar').append('<img src="' + user.avatar_url +'" alt="User Image" style="width:200px;height:175px;">');
+        $('.information').append('<div>User Information</div><span style="display: block">User Profile: <a href="'+ user.html_url +'">' + user.html_url + '</a></span><span style="display: block;">subscriptions_url: ' + user.subscriptions_url + '</span>');
+    }
+
+    function noSuchUser(username) {
+        //3. set the elements such that a suitable message is displayed
+        $('.avatar').html('');
+        $('.information').html('');
+        $('h2').html('');
+        $('h2').html('There is no user '+ username +' on GitHub. Please type the correct username.');
+    }
+
+
+    $(document).ready(function(){
+        $(document).on('keypress', '#username', function(e){
+            //check if the enter(i.e return) key is pressed
+            if (e.which == 13) {
+                //get what the user enters
+                username = $(this).val();
+                //reset the text typed in the input
+                $(this).val("");
+                //get the user's information and store the respsonse
+                response = getGithubInfo(username);
+                //if the response is successful show the user's details
+                if (response.status == 200) {
+                    showUser(JSON.parse(response.responseText));
+                    //else display suitable message
+                } else {
+                    noSuchUser(username);
+                }
+            }
+        })
+    });
+
+}]);
