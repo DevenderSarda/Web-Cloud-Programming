@@ -1,0 +1,475 @@
+Lab Assignment 4 Code base:
+
+Login Activity:
+
+package com.innovators.fitnesschef;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.support.v7.widget.ActionMenuView;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
+
+public class LoginActivity extends AppCompatActivity  {
+    private EditText email;
+    private EditText pass;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+     getSupportActionBar().setLogo(R.drawable.ic_arrow_back_white_24dp);
+      getSupportActionBar().setDisplayUseLogoEnabled(true);
+        setContentView(R.layout.activity_login);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        Intent redirect = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(redirect);
+                        return true;
+                    }
+
+                });
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void valid(View v) {
+        email = (EditText) findViewById(R.id.editText);
+        pass = (EditText) findViewById(R.id.editText2);
+        email.setError(null);
+        pass.setError(null);
+        String x = email.getText().toString();
+        String y = pass.getText().toString();
+        if (x.isEmpty() & y.isEmpty()) {
+            email.setError("Email is required");
+            pass.setError("Passowrd is required");
+        } else if (x.isEmpty()) {
+            email.setError("Email is required");
+        } else if (y.isEmpty()) {
+            pass.setError("Password is required");
+        } else {
+            SharedPreferences sp = getSharedPreferences(x, Activity.MODE_PRIVATE);
+            if (x.equals(sp.getString("email","")) & y.equals(sp.getString("password",""))) {
+                Intent redirect = new Intent(LoginActivity.this, home.class);
+                redirect.putExtra("email",x);
+                startActivity(redirect);
+            } else {
+                email.setError("Email or Password Mismatch");
+                pass.setError("Email or Password Mismatch");
+            }
+        }
+
+
+
+
+    }
+
+
+
+
+
+}
+
+
+Sign Up Activity:
+
+package com.innovators.fitnesschef;
+
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+
+public class SignUpActivity extends AppCompatActivity {
+
+    LoginButton loginButton;
+    CallbackManager callbackManager;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        setContentView(R.layout.activity_sign_up);
+        loginButton=(LoginButton)findViewById(R.id.btn_fb_signup);
+        callbackManager= CallbackManager.Factory.create();
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Intent redirect=new Intent(SignUpActivity.this,GoalActivity.class);
+                startActivity(redirect);
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+
+            }
+        });
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        callbackManager.onActivityResult(requestCode,resultCode,data);
+    }
+
+
+    public void goal(View v)
+    {
+        Intent redirect=new Intent(SignUpActivity.this,RegisterActivity.class);
+        startActivity(redirect);
+    }
+}
+
+Register Activity:
+
+package com.innovators.fitnesschef;
+
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+
+public class RegisterActivity extends AppCompatActivity {
+    private EditText pas;
+    private EditText cpas;
+    private EditText email;
+    private EditText nam;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_register);
+        pas = (EditText) findViewById(R.id.pass);
+        cpas = (EditText) findViewById(R.id.cpass);
+        email = (EditText) findViewById(R.id.Email);
+        nam =    (EditText) findViewById(R.id.Name);
+
+        pas.getBackground().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_IN);
+        cpas.getBackground().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_IN);
+        email.getBackground().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_IN);
+        nam.getBackground().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_IN);
+
+
+    }
+
+    public void reg(View v)
+    {
+
+        String s=email.getText().toString();
+        SharedPreferences settings = getSharedPreferences(s,0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("email",s);
+        editor.putString("username",nam.getText().toString());
+        editor.putString("password",pas.getText().toString());
+        editor.commit();
+        Intent redirect=new Intent(RegisterActivity.this,GoalActivity.class);
+        redirect.putExtra("email",s);
+        startActivity(redirect);
+    }
+}
+
+Main Activity:
+
+package com.innovators.fitnesschef;
+
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+
+    public void loginpage(View v)
+    {
+
+
+                Intent redirect=new Intent(MainActivity.this,LoginActivity.class);
+                startActivity(redirect);
+            }
+
+
+
+    public void in(View v)
+    {
+        Intent redirect=new Intent(MainActivity.this,SignUpActivity.class);
+        startActivity(redirect);
+    }
+
+}
+
+
+Profile Activity:
+
+package com.innovators.fitnesschef;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.SharedPreferences;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class ProfileActivity extends AppCompatActivity {
+    TextView em;
+    TextView ht;
+    TextView wt;
+    TextView gen;
+    TextView ag;
+    String name;
+    String height1;
+    String weight1;
+    String gender;
+    String age1;
+    SharedPreferences sp;
+    String gm;
+    Double x ;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_profile);
+        Bundle extras = getIntent().getExtras();
+        gm=extras.getString("email");
+
+        em = (TextView)findViewById(R.id.email);
+        ht = (TextView) findViewById(R.id.height);
+        wt = (TextView) findViewById(R.id.weight);
+        gen = (TextView) findViewById(R.id.gender);
+        ag = (TextView) findViewById(R.id.age);
+
+        sp = getSharedPreferences(gm, Activity.MODE_PRIVATE);
+        name = sp.getString("fullname", "");
+        em.setText(name);
+
+        height1 = sp.getString("height", "");
+        ht.setText(height1);
+
+        weight1 = sp.getString("weight", "");
+        wt.setText(weight1);
+
+        gender = sp.getString("gender", "");
+        gen.setText(gender);
+
+        age1 = sp.getString("age", "");
+        ag.setText(age1);
+
+    }
+
+
+    public void calorie(){
+
+        sp = getSharedPreferences(gm,Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+
+        //Calorie Calculator
+
+
+        String comp = "male";
+
+        if (gender.equals(comp)) {
+
+
+            x = ((10) * (Integer.parseInt(weight1)) + (6.25) * (Integer.parseInt(height1)) - (5) * (Integer.parseInt(age1)) + (5));
+            editor.putInt("estcal",x.intValue());
+            editor.commit();
+        } else {
+            x = ((10) * (Integer.parseInt(weight1)) + (6.25) * (Integer.parseInt(height1)) - (5) * (Integer.parseInt(age1)) - (161));
+            editor.putInt("estcal",x.intValue());
+            editor.commit();
+        }
+
+    }
+
+
+    public void htlink(View view){
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(ProfileActivity.this);
+        View mView = getLayoutInflater().inflate(R.layout.dialog_ht, null);
+        final EditText ht1 = (EditText) mView.findViewById(R.id.alert_ht);
+
+        Button mdone = (Button) mView.findViewById(R.id.btnDone);
+
+        mBuilder.setView(mView);
+        final AlertDialog dialog = mBuilder.create();
+        dialog.show();
+
+        mdone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(!ht1.getText().toString().isEmpty()){
+                    Toast.makeText(ProfileActivity.this,
+                            "Successfully Edited",
+                            Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+
+                    sp = getSharedPreferences(gm, Activity.MODE_PRIVATE);
+                    SharedPreferences.Editor edt = sp.edit();
+                    edt.putString("height",ht1.getText().toString());
+                    edt.commit();
+                    height1 = sp.getString("height", "");
+                    Toast.makeText(ProfileActivity.this,
+                            height1,
+                            Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+
+
+
+
+                    ht.setText(ht1.getText().toString());
+                    calorie();
+
+                }
+                else{
+                    Toast.makeText(ProfileActivity.this,
+                            "Please enter Height",
+                            Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+
+
+    }
+
+
+    public void wtclick(View view){
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(ProfileActivity.this);
+        View mView = getLayoutInflater().inflate(R.layout.dialog_wt, null);
+        final EditText wt1 = (EditText) mView.findViewById(R.id.alert_wt);
+
+        Button mdone = (Button) mView.findViewById(R.id.btnDone_wt);
+
+        mBuilder.setView(mView);
+        final AlertDialog dialog = mBuilder.create();
+        dialog.show();
+
+        mdone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(!wt1.getText().toString().isEmpty()){
+                    Toast.makeText(ProfileActivity.this,
+                            "Successfully Edited",
+                            Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+
+                    sp = getSharedPreferences(gm, Activity.MODE_PRIVATE);
+                    SharedPreferences.Editor edt = sp.edit();
+                    edt.putString("weight",wt1.getText().toString());
+                    edt.commit();
+                    weight1 = sp.getString("weight", "");
+                    Toast.makeText(ProfileActivity.this,
+                            weight1,
+                            Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+
+
+
+
+                    wt.setText(wt1.getText().toString());
+                    calorie();
+
+                }
+                else{
+                    Toast.makeText(ProfileActivity.this,
+                            "Please enter Weight",
+                            Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+
+
+    }
+
+    public void ageclick(View view){
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(ProfileActivity.this);
+        View mView = getLayoutInflater().inflate(R.layout.dialog_age, null);
+        final EditText ag1 = (EditText) mView.findViewById(R.id.alert_age);
+
+        Button mdone = (Button) mView.findViewById(R.id.btnDone_age);
+
+        mBuilder.setView(mView);
+        final AlertDialog dialog = mBuilder.create();
+        dialog.show();
+
+        mdone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(!ag1.getText().toString().isEmpty()){
+                    Toast.makeText(ProfileActivity.this,
+                            "Successfully Edited",
+                            Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+
+                    sp = getSharedPreferences(gm, Activity.MODE_PRIVATE);
+                    SharedPreferences.Editor edt = sp.edit();
+                    edt.putString("age",ag1.getText().toString());
+                    edt.commit();
+                    age1 = sp.getString("age", "");
+                    Toast.makeText(ProfileActivity.this,
+                            age1,
+                            Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+
+
+
+
+                    ag.setText(ag1.getText().toString());
+                    calorie();
+
+                }
+                else{
+                    Toast.makeText(ProfileActivity.this,
+                            "Please enter Age",
+                            Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+    }
+}
